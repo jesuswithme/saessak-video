@@ -1,0 +1,6 @@
+node_modules/
+*.png
+!media/*.png
+*.mp4
+*.wav
+.profile/
