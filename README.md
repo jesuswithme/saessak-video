@@ -15,6 +15,7 @@
 - **같은 캐릭터 유지**: 장면이 바뀌어도 새싹이의 생김새와 비율이 그대로
 - **합성 BGM·효과음**: 장면 길이에 딱 맞는 피아노·오르골 음악과 바람·바스락·빗방울·띵 효과음을 코드로 만들어 저작권 걱정 없음
 - **게시글 문구 자막**: 이야기의 절정에 맞춰 떠오르는 한 줄 자막
+- **세로형(9:16)과 워터마크**: `--size 1080x1920`으로 릴스·쇼츠용 세로 영상, `?mark=@계정`으로 하단 워터마크
 
 ## 설치
 
@@ -69,6 +70,7 @@ node scripts/render.mjs examples/sit.js --seconds 6 --out ./out
 node scripts/render.mjs examples/sit.js --seconds 6 --name rain --query scene=rain --bg "#edf0ea" --out ./out
 node scripts/render.mjs examples/leaves-walk.js --seconds 8 --out ./out
 node scripts/render.mjs examples/snow.js --seconds 8 --query caption --music examples/snow.music.json --out ./out
+node scripts/render.mjs examples/lastleaf.js --seconds 10 --size 1080x1920 --query "caption&mark=@내계정" --music examples/lastleaf.music.json --out ./out
 ```
 
 결과: `이름.html`(브라우저에서 바로 움직임), `이름.mp4`, `이름_30s.mp4`(반복본), `이름_bgm.wav`(음악을 넣은 경우)
@@ -79,7 +81,7 @@ node scripts/render.mjs examples/snow.js --seconds 8 --query caption --music exa
 |---|---|
 | `SKILL.md` | Claude가 읽는 작업 지침 (장면 규칙, 소리, 자막, 확인 방법) |
 | `references/character.md` | 새싹이 치수·색·그리는 순서 |
-| `examples/` | 예제 장면 5개(앉기·비·낙엽 밟기·가을·첫눈)와 BGM 설정 |
+| `examples/` | 예제 장면 6개(앉기·비·낙엽 밟기·가을·첫눈·세로형 마지막 잎)와 BGM 설정 |
 | `scripts/render.mjs` | 장면 → HTML → 프레임 캡처 → MP4 |
 | `scripts/music.mjs` | JSON 설정으로 BGM·효과음 합성 |
 | `scripts/capture.ts`, `lib/ink.ts` | 프레임 캡처와 선화 그리기 라이브러리 |

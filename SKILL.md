@@ -20,6 +20,8 @@ Threads 같은 SNS에 올리는 짧은 공감형 루프 영상. 크림색 종이
 | `examples/autumn.js` | 바람마다 새싹이 물들고 잎이 머리에 내려앉음 (10초), `?caption` 자막 |
 | `examples/autumn.music.json` | autumn.js용 BGM 설정 |
 | `examples/snow.js` | 첫눈을 혀로 받아먹고 기뻐함 (8초 제자리), 빨간 목도리 스프링, 1.5배 확대 카메라, `?caption` 자막 |
+| `examples/lastleaf.js` | 세로형(9:16) 예제: 벤치의 나이 든 새싹이(흰 눈썹)가 바람에 버티는 마지막 잎을 보고 미소 (10초), 1.4배 카메라, `?caption`, `?mark=@계정` 워터마크 |
+| `examples/lastleaf.music.json` | lastleaf.js용 BGM (72 BPM 3마디) |
 | `examples/snow.music.json` | snow.js용 밝은 오르골 BGM (120 BPM, 받아먹는 순간 chime) |
 | `references/character.md` | 새싹이 치수·색·그리는 순서·자세별 코드 위치 |
 
@@ -32,7 +34,7 @@ Threads 같은 SNS에 올리는 짧은 공감형 루프 영상. 크림색 종이
    ```bash
    node ~/.claude/skills/saessak-video/scripts/render.mjs snow.js --seconds 8
    ```
-   옵션: `--name 이름` `--out 폴더` `--query "caption&scene=rain"` `--music snow.music.json` `--loop 30` `--bg #edf0ea`
+   옵션: `--name 이름` `--out 폴더` `--query "caption&scene=rain"` `--music snow.music.json` `--loop 30` `--bg #edf0ea` `--size 1080x1920`(세로형)
 5. **눈으로 확인한다.** render가 마지막에 출력하는 `확인용 모음` 이미지(16칸)를 Read로 보고, 핵심 순간은 `ffmpeg -i 프레임/f0150.png -vf scale=960:-1 one.png` 처럼 한 장 크게, 또는 crop+tile로 확대해서 본다. 고칠 게 보이면 고치고 다시 렌더. 확인 안 된 채로 보내지 않는다.
 6. **BGM과 자막**(요청이 있거나 마무리 단계일 때). 아래 "소리"와 "자막" 참고. 소리는 들어볼 수 없으니 `volumedetect`로 구간별 음량만 확인하고, 사용자에게 들어봐 달라고 말한다.
 7. **결과 전달.** MP4를 SendUserFile로 보내고, 무엇이 언제 일어나는지 시간 순으로 짧게 설명한다. 소리·워터마크 유무, 확인하지 못한 것을 밝힌다.
@@ -71,7 +73,11 @@ Threads 같은 SNS에 올리는 짧은 공감형 루프 영상. 크림색 종이
 
 ## 세로형 (9:16)
 
-viewBox를 `0 0 270 480` 비율로 바꾸고 장면을 위아래로 다시 배치한 뒤 `render.mjs`의 캡처 크기 대신 직접 `capture.ts <url> <dir> <frames> 30 1080 1920`를 돌린다. 단순히 잘라내지 않는다.
+장면 viewBox를 `0 0 270 480`으로 만들고 `--size 1080x1920`으로 렌더한다. 가로 장면을 잘라내지 말고 다시 배치한다 (`examples/lastleaf.js` 참고).
+
+- 캐릭터가 작아지니 장면 그룹에 카메라(`translate(…) scale(1.4)`)를 걸어 주인공과 핵심 소품을 키운다.
+- 아래쪽 약 100px(y 380~480)은 비워 자막(y≈428, 크기 15)과 워터마크(y≈466) 자리로 쓴다. 자막은 카메라 밖 필터 그룹에, 워터마크는 떨림 없이 `svg` 바로 아래에 둔다.
+- 워터마크(계정명)는 사용자가 요청할 때만, `?mark=@계정` 처럼 URL 플래그로 넣는다.
 
 ## 사용자가 쓰기 좋은 요청 형식
 

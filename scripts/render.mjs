@@ -2,6 +2,7 @@
 //
 //   node render.mjs <scene.js> [--seconds 10] [--name 이름] [--out 폴더]
 //                   [--query "caption&scene=rain"] [--music spec.json] [--loop 30] [--bg #f7f0e1]
+//                   [--size 1080x1920]   (세로형 9:16 — 장면 viewBox도 270×480으로)
 //
 // 결과(출력 폴더): 이름.html, 이름.mp4, 이름_30s.mp4, (음악이 있으면) 이름_bgm.wav
 // 확인용 모음 이미지: <임시폴더>/saessak-frames/이름/sheet.png (경로를 마지막에 출력한다)
@@ -26,6 +27,7 @@ const query = opt('query', '');
 const music = opt('music');
 const loopTarget = Number(opt('loop', 30));
 const bg = opt('bg', '#f7f0e1');
+const [vw, vh] = opt('size', '1920x1080').split('x').map(Number);
 mkdirSync(outDir, { recursive: true });
 
 const run = (cmd, args, env) => {
@@ -71,7 +73,7 @@ if (!CHROME) { console.error('Chrome/Edge를 찾지 못했습니다. CHROME 환�
 const frameDir = join(tmpdir(), 'saessak-frames', name);
 rmSync(frameDir, { recursive: true, force: true });
 const url = `${pathToFileURL(html).href}?debug${query ? `&${query}` : ''}`;
-run(process.execPath, [join(ROOT, 'scripts/capture.ts'), url, frameDir, String(frames), String(fps), '1920', '1080'], { CHROME });
+run(process.execPath, [join(ROOT, 'scripts/capture.ts'), url, frameDir, String(frames), String(fps), String(vw), String(vh)], { CHROME });
 
 // 3) 음악 (선택)
 let wav = null;
@@ -98,7 +100,7 @@ if (reps > 1) {
 
 // 5) 확인용 모음 이미지 (16칸)
 const sheet = join(frameDir, 'sheet.png');
-run('ffmpeg', ['-y', '-v', 'error', '-framerate', String(fps), '-i', join(frameDir, 'f%04d.png'), '-vf', `select='not(mod(n\\,${Math.max(1, Math.floor(frames / 16))}))',scale=480:-1,tile=4x4`, '-frames:v', '1', sheet]);
+run('ffmpeg', ['-y', '-v', 'error', '-framerate', String(fps), '-i', join(frameDir, 'f%04d.png'), '-vf', `select='not(mod(n\\,${Math.max(1, Math.floor(frames / 16))}))',scale=${vw >= vh ? 480 : 240}:-1,tile=${vw >= vh ? '4x4' : '8x2'}`, '-frames:v', '1', sheet]);
 
 console.log('\n완료');
 for (const [k, v] of [['HTML', html], ['영상', mp4], ['반복 영상', looped], ['BGM', wav], ['프레임', frameDir], ['확인용 모음', sheet]]) if (v) console.log(`  ${k}: ${v}`);
