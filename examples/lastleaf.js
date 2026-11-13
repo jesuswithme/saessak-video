@@ -80,7 +80,7 @@ if (cap) cap.textContent = '아직 붙어 있는 것도, 용기겠지';
 const mark = markText && el('text', { x: W / 2, y: 466, 'text-anchor': 'middle', 'font-family': '"Segoe UI", "Malgun Gothic", sans-serif', 'font-size': 8.5, 'letter-spacing': 0.6, fill: 'currentColor', opacity: 0.5 }, svg);
 if (mark) mark.textContent = markText;
 
-let sx = 0, sv = 0, py = 0;
+let sx = -0.8, sv = 0, py = null;   // 새싹 스프링은 쉬는 자세에서 시작 (루프 이음매에서 튀지 않게)
 run((tt, dt) => {
   const t = ((tt % LOOP) + LOOP) % LOOP;
   turb.setAttribute('seed', 1 + (Math.floor(t * 5 + 1e-6) % (LOOP * 5)));
@@ -149,7 +149,7 @@ run((tt, dt) => {
   smile.setAttribute('opacity', f(0.25 + 0.75 * relief));
 
   // 새싹: 바람에 왼쪽으로 눕고, 머리가 오르내리면 한 박자 늦게
-  const vy = (hy - py) / Math.max(dt, 1e-3); py = hy;
+  const vy = py === null ? 0 : (hy - py) / Math.max(dt, 1e-3); py = hy;
   sv += (60 * (-0.06 * vy - 0.8 - 5 * (w - 0.12) - sx) - 7 * sv) * dt; sx += sv * dt;
   const s = Math.max(-7, Math.min(7, sx)) + 1.2 * w * jit;
   const sbx = hx - 1, sby = hy - 17.6, tx = sbx + s * 1.4, ty = sby - 9 + Math.abs(s) * 0.3;
